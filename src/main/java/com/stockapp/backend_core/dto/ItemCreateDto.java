@@ -1,6 +1,10 @@
 package com.stockapp.backend_core.dto;
 
 import com.stockapp.backend_core.entity.enums.ItemType;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 
 @Getter
