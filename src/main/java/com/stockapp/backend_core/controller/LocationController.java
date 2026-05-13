@@ -26,7 +26,13 @@ public class LocationController {
     }
 
     @GetMapping
-    public List<LocationResponseDto> findAll() {
+    public List<LocationResponseDto> findAll(
+        @RequestParam(required = false) Boolean active
+    ) {
+        if (active != null) {
+            return locationService.findByActive(active);
+        }
+
         return locationService.findAll();
     }
 
@@ -43,6 +49,13 @@ public class LocationController {
             @Valid @RequestBody LocationCreateDto dto
     ) {
         return locationService.update(id, dto);
+    }
+    
+    @PatchMapping("/{id}/activate")
+    public void activate(
+            @PathVariable Long id
+    ) {
+        locationService.activate(id);
     }
 
     @DeleteMapping("/{id}")

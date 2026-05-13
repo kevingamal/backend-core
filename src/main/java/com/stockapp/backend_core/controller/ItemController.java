@@ -60,6 +60,13 @@ public class ItemController {
     ) {
         return itemService.update(id, dto);
     }
+    
+    @PatchMapping("/{id}/activate")
+    public void activate(
+            @PathVariable Long id
+    ) {
+        itemService.activate(id);
+    }
 
     @DeleteMapping("/{id}")
     public void deactivate(

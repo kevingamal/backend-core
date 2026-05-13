@@ -24,9 +24,37 @@ public class UserController {
     ) {
         return userService.create(dto);
     }
+    
+    @PutMapping("/{id}")
+    public UserResponseDto update(
+            @PathVariable Long id,
+            @Valid @RequestBody UserCreateDto dto
+    ) {
+        return userService.update(id, dto);
+    }
+    
+    @PatchMapping("/{id}/activate")
+    public void activate(
+            @PathVariable Long id
+    ) {
+        userService.activate(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deactivate(
+            @PathVariable Long id
+    ) {
+        userService.deactivate(id);
+    }
 
     @GetMapping
-    public List<UserResponseDto> findAll() {
+    public List<UserResponseDto> findAll(
+            @RequestParam(required = false) Boolean active
+    ) {
+        if (active != null) {
+            return userService.findByActive(active);
+        }
+
         return userService.findAll();
     }
 

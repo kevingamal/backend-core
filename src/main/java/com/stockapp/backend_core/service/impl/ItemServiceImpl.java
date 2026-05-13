@@ -122,6 +122,16 @@ public class ItemServiceImpl implements ItemService {
 
         return mapToResponseDto(updatedItem);
     }
+    
+    @Override
+    public void activate(Long id) {
+        Item item = itemRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Item no encontrado"));
+
+        item.setIsActive(true);
+
+        itemRepository.save(item);
+    }
 
     @Override
     public void deactivate(Long id) {

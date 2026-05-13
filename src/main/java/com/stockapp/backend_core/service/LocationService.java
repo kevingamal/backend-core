@@ -12,8 +12,12 @@ public interface LocationService {
     List<LocationResponseDto> findAll();
 
     LocationResponseDto findById(Long id);
+    
+    List<LocationResponseDto> findByActive(Boolean active);
 
     LocationResponseDto update(Long id, LocationCreateDto dto);
+    
+    void activate(Long id);
 
     void deactivate(Long id);
 }

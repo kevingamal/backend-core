@@ -20,6 +20,8 @@ public interface ItemService {
     List<ItemResponseDto> findByActive(Boolean active);
 
     ItemResponseDto update(Long id, ItemCreateDto dto);
+    
+    void activate(Long id);
 
     void deactivate(Long id);
 }

@@ -26,15 +26,59 @@ public class UserServiceImpl implements UserService {
         user.setEmail(dto.getEmail());
         user.setPasswordHash(dto.getPassword()); // Temporal: después se reemplaza por hash real
         user.setRole(dto.getRole());
+        user.setIsActive(true);
 
         User savedUser = userRepository.save(user);
 
         return mapToResponseDto(savedUser);
     }
+    
+    @Override
+    public UserResponseDto update(Long id, UserCreateDto dto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+        user.setPasswordHash(dto.getPassword()); // Temporal: después se reemplaza por hash real
+        user.setRole(dto.getRole());
+
+        User updatedUser = userRepository.save(user);
+
+        return mapToResponseDto(updatedUser);
+    }
+    
+    @Override
+    public void activate(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        user.setIsActive(true);
+
+        userRepository.save(user);
+    }
+
+    @Override
+    public void deactivate(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        user.setIsActive(false);
+
+        userRepository.save(user);
+    }
 
     @Override
     public List<UserResponseDto> findAll() {
         return userRepository.findAll()
+                .stream()
+                .map(this::mapToResponseDto)
+                .toList();
+    }
+    
+    @Override
+    public List<UserResponseDto> findByActive(Boolean active) {
+        return userRepository.findByIsActive(active)
                 .stream()
                 .map(this::mapToResponseDto)
                 .toList();
@@ -53,7 +97,8 @@ public class UserServiceImpl implements UserService {
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
-                user.getRole()
+                user.getRole(),
+                user.getIsActive()
         );
     }
 }

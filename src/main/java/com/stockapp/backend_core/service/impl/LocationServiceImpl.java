@@ -57,6 +57,14 @@ public class LocationServiceImpl implements LocationService {
 
         return mapToResponseDto(location);
     }
+    
+    @Override
+    public List<LocationResponseDto> findByActive(Boolean active) {
+	    return locationRepository.findByIsActive(active)
+	            .stream()
+	            .map(this::mapToResponseDto)
+	            .toList();
+    }
 
     @Override
     public LocationResponseDto update(Long id, LocationCreateDto dto) {
@@ -70,6 +78,16 @@ public class LocationServiceImpl implements LocationService {
         Location updatedLocation = locationRepository.save(location);
 
         return mapToResponseDto(updatedLocation);
+    }
+    
+    @Override
+    public void activate(Long id) {
+        Location location = locationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Ubicación no encontrada"));
+
+        location.setIsActive(true);
+
+        locationRepository.save(location);
     }
 
     @Override

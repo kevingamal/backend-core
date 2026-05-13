@@ -12,4 +12,5 @@ public class UserResponseDto {
     private String name;
     private String email;
     private UserRole role;
+    private Boolean isActive;
 }
