@@ -26,8 +26,41 @@ public class StockMovementController {
     }
 
     @GetMapping
-    public List<StockMovementResponseDto> findAll() {
-        return stockMovementService.findAll();
+    public List<StockMovementResponseDto> findAll(
+        @RequestParam(required = false) Long itemId,
+        @RequestParam(required = false) Long userId,
+        @RequestParam(required = false) String movementType,
+        @RequestParam(required = false) Long fromLocationId,
+        @RequestParam(required = false) Long toLocationId
+    ) {
+	    if (itemId != null && movementType != null) {
+	        return stockMovementService.findByItemIdAndMovementType(
+	                itemId,
+	                movementType
+	        );
+	    }
+
+	    if (itemId != null) {
+	        return stockMovementService.findByItemId(itemId);
+	    }
+
+	    if (userId != null) {
+	        return stockMovementService.findByUserId(userId);
+	    }
+
+	    if (movementType != null) {
+	        return stockMovementService.findByMovementType(movementType);
+	    }
+
+	    if (fromLocationId != null) {
+	        return stockMovementService.findByFromLocationId(fromLocationId);
+	    }
+
+	    if (toLocationId != null) {
+	        return stockMovementService.findByToLocationId(toLocationId);
+	    }
+
+	    return stockMovementService.findAll();
     }
 
     @GetMapping("/{id}")

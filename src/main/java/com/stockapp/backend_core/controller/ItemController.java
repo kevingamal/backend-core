@@ -26,8 +26,24 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemResponseDto> findAll() {
-        return itemService.findAll();
+	public List<ItemResponseDto> findAll(
+        	@RequestParam(required = false) String type,
+	        @RequestParam(required = false) Long locationId,
+	        @RequestParam(required = false) Boolean active
+    ) {
+	    if (type != null) {
+	        return itemService.findByType(type);
+		}
+
+	    if (locationId != null) {
+	        return itemService.findByLocationId(locationId);
+		}
+
+	    if (active != null) {
+        	return itemService.findByActive(active);
+		}
+
+	    return itemService.findAll();
     }
 
     @GetMapping("/{id}")

@@ -100,6 +100,54 @@ public class StockMovementServiceImpl implements StockMovementService {
                 .map(this::mapToResponseDto)
                 .toList();
     }
+    
+    @Override
+    public List<StockMovementResponseDto> findByUserId(Long userId) {
+	    return stockMovementRepository.findByUserId(userId)
+	            .stream()
+	            .map(this::mapToResponseDto)
+	            .toList();
+    }
+
+    @Override
+    public List<StockMovementResponseDto> findByMovementType(String movementType) {
+	    MovementType type = MovementType.valueOf(movementType.toUpperCase());
+
+	    return stockMovementRepository.findByMovementType(type)
+	            .stream()
+	            .map(this::mapToResponseDto)
+	            .toList();
+    }
+
+    @Override
+    public List<StockMovementResponseDto> findByFromLocationId(Long fromLocationId) {
+	    return stockMovementRepository.findByFromLocationId(fromLocationId)
+	            .stream()
+	            .map(this::mapToResponseDto)
+	            .toList();
+    }
+
+    @Override
+    public List<StockMovementResponseDto> findByToLocationId(Long toLocationId) {
+	    return stockMovementRepository.findByToLocationId(toLocationId)
+        	    .stream()
+        	    .map(this::mapToResponseDto)
+        	    .toList();
+    }
+
+    @Override
+    public List<StockMovementResponseDto> findByItemIdAndMovementType(
+	        Long itemId,
+	        String movementType
+    ) {
+	    MovementType type = MovementType.valueOf(movementType.toUpperCase());
+
+	    return stockMovementRepository
+	            .findByItemIdAndMovementType(itemId, type)
+	            .stream()
+	            .map(this::mapToResponseDto)
+	            .toList();
+    }
 
     private void validateMovement(
             StockMovementCreateDto dto,

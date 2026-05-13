@@ -12,6 +12,12 @@ public interface ItemService {
     List<ItemResponseDto> findAll();
 
     ItemResponseDto findById(Long id);
+    
+    List<ItemResponseDto> findByType(String type);
+
+    List<ItemResponseDto> findByLocationId(Long locationId);
+
+    List<ItemResponseDto> findByActive(Boolean active);
 
     ItemResponseDto update(Long id, ItemCreateDto dto);
 

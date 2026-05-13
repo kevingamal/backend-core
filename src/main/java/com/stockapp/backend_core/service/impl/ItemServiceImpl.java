@@ -3,6 +3,7 @@ package com.stockapp.backend_core.service.impl;
 import com.stockapp.backend_core.dto.ItemCreateDto;
 import com.stockapp.backend_core.dto.ItemResponseDto;
 import com.stockapp.backend_core.entity.Item;
+import com.stockapp.backend_core.entity.enums.ItemType;
 import com.stockapp.backend_core.entity.Location;
 import com.stockapp.backend_core.entity.User;
 import com.stockapp.backend_core.repository.ItemRepository;
@@ -69,6 +70,32 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new RuntimeException("Item no encontrado"));
 
         return mapToResponseDto(item);
+    }
+    
+    @Override
+    public List<ItemResponseDto> findByType(String type) {
+    	ItemType itemType = ItemType.valueOf(type.toUpperCase());
+
+ 	   return itemRepository.findByType(itemType)
+            .stream()
+            .map(this::mapToResponseDto)
+            .toList();
+    }
+
+    @Override
+    public List<ItemResponseDto> findByLocationId(Long locationId) {
+	    return itemRepository.findByCurrentLocationId(locationId)
+ 	           .stream()
+ 	           .map(this::mapToResponseDto)
+	            .toList();
+    }
+
+    @Override
+    public List<ItemResponseDto> findByActive(Boolean active) {
+	    return itemRepository.findByIsActive(active)
+	            .stream()
+	            .map(this::mapToResponseDto)
+	            .toList();
     }
 
     @Override

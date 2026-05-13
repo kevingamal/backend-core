@@ -14,4 +14,17 @@ public interface StockMovementService {
     StockMovementResponseDto findById(Long id);
 
     List<StockMovementResponseDto> findByItemId(Long itemId);
+    
+    List<StockMovementResponseDto> findByUserId(Long userId);
+
+    List<StockMovementResponseDto> findByMovementType(String movementType);
+
+    List<StockMovementResponseDto> findByFromLocationId(Long fromLocationId);
+
+    List<StockMovementResponseDto> findByToLocationId(Long toLocationId);
+
+    List<StockMovementResponseDto> findByItemIdAndMovementType(
+        Long itemId,
+        String movementType
+    );
 }
