@@ -7,15 +7,22 @@ import com.stockapp.backend_core.repository.UserRepository;
 import com.stockapp.backend_core.service.UserService;
 import org.springframework.stereotype.Service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserServiceImpl(
+        UserRepository userRepository,
+        PasswordEncoder passwordEncoder
+    ) {
+       this.userRepository = userRepository;
+       this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -24,7 +31,7 @@ public class UserServiceImpl implements UserService {
 
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
-        user.setPasswordHash(dto.getPassword()); // Temporal: después se reemplaza por hash real
+        user.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
         user.setRole(dto.getRole());
         user.setIsActive(true);
 
@@ -40,7 +47,7 @@ public class UserServiceImpl implements UserService {
 
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
-        user.setPasswordHash(dto.getPassword()); // Temporal: después se reemplaza por hash real
+        user.setPasswordHash(passwordEncoder.encode(dto.getPassword()));
         user.setRole(dto.getRole());
 
         User updatedUser = userRepository.save(user);
