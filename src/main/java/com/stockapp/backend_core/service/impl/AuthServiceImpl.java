@@ -10,6 +10,10 @@ import com.stockapp.backend_core.service.AuthService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.stockapp.backend_core.exception.UnauthorizedException;
+import com.stockapp.backend_core.exception.BadRequestException;
+import com.stockapp.backend_core.exception.NotFoundException;
+
 @Service
 public class AuthServiceImpl implements AuthService {
 
@@ -30,14 +34,14 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponseDto login(AuthLoginDto dto) {
         User user = userRepository.findByEmail(dto.getEmail())
-                .orElseThrow(() -> new RuntimeException("Credenciales inválidas"));
+                .orElseThrow(() -> new UnauthorizedException("Credenciales inválidas"));
 
         if (!Boolean.TRUE.equals(user.getIsActive())) {
-            throw new RuntimeException("Usuario inactivo");
+            throw new BadRequestException("Usuario inactivo");
         }
 
         if (!passwordEncoder.matches(dto.getPassword(), user.getPasswordHash())) {
-            throw new RuntimeException("Credenciales inválidas");
+            throw new UnauthorizedException("Credenciales inválidas");
         }
 
         String token = jwtService.generateToken(user);
@@ -51,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public UserResponseDto me(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
 
         return mapToUserResponseDto(user);
     }

@@ -9,6 +9,8 @@ import com.stockapp.backend_core.repository.UserRepository;
 import com.stockapp.backend_core.service.LocationService;
 import org.springframework.stereotype.Service;
 
+import com.stockapp.backend_core.exception.NotFoundException;
+
 import java.util.List;
 
 @Service
@@ -28,7 +30,7 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public LocationResponseDto create(LocationCreateDto dto) {
         User createdByUser = userRepository.findById(dto.getCreatedByUserId())
-                .orElseThrow(() -> new RuntimeException("Usuario creador no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Usuario creador no encontrado"));
 
         Location location = new Location();
         location.setName(dto.getName());
@@ -53,7 +55,7 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public LocationResponseDto findById(Long id) {
         Location location = locationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Locación no encontrada"));
+                .orElseThrow(() -> new NotFoundException("Locación no encontrada"));
 
         return mapToResponseDto(location);
     }
@@ -69,7 +71,7 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public LocationResponseDto update(Long id, LocationCreateDto dto) {
         Location location = locationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Locación no encontrada"));
+                .orElseThrow(() -> new NotFoundException("Locación no encontrada"));
 
         location.setName(dto.getName());
         location.setImg(dto.getImg());
@@ -83,7 +85,7 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public void activate(Long id) {
         Location location = locationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ubicación no encontrada"));
+                .orElseThrow(() -> new NotFoundException("Locación no encontrada"));
 
         location.setIsActive(true);
 
@@ -93,7 +95,7 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public void deactivate(Long id) {
         Location location = locationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Locación no encontrada"));
+                .orElseThrow(() -> new NotFoundException("Locación no encontrada"));
 
         location.setIsActive(false);
 

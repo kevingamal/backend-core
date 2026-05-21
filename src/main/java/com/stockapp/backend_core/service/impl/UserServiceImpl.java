@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.stockapp.backend_core.exception.NotFoundException;
+
 import java.util.List;
 
 @Service
@@ -43,7 +45,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto update(Long id, UserCreateDto dto) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
 
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
@@ -58,7 +60,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void activate(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
 
         user.setIsActive(true);
 
@@ -68,7 +70,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deactivate(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
 
         user.setIsActive(false);
 
@@ -94,7 +96,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto findById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
 
         return mapToResponseDto(user);
     }

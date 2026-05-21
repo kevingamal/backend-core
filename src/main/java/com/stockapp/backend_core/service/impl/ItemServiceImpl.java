@@ -12,6 +12,8 @@ import com.stockapp.backend_core.repository.UserRepository;
 import com.stockapp.backend_core.service.ItemService;
 import org.springframework.stereotype.Service;
 
+import com.stockapp.backend_core.exception.NotFoundException;
+
 import java.util.List;
 
 @Service
@@ -34,10 +36,10 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemResponseDto create(ItemCreateDto dto) {
         Location currentLocation = locationRepository.findById(dto.getCurrentLocationId())
-                .orElseThrow(() -> new RuntimeException("Ubicación no encontrada"));
+                .orElseThrow(() -> new NotFoundException("Ubicación no encontrada"));
 
         User createdByUser = userRepository.findById(dto.getCreatedByUserId())
-                .orElseThrow(() -> new RuntimeException("Usuario creador no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Usuario creador no encontrado"));
 
         Item item = new Item();
         item.setName(dto.getName());
@@ -67,7 +69,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemResponseDto findById(Long id) {
         Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Item no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Item no encontrado"));
 
         return mapToResponseDto(item);
     }
@@ -101,13 +103,13 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemResponseDto update(Long id, ItemCreateDto dto) {
         Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Item no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Item no encontrado"));
 
         Location currentLocation = locationRepository.findById(dto.getCurrentLocationId())
-                .orElseThrow(() -> new RuntimeException("Ubicación no encontrada"));
+                .orElseThrow(() -> new NotFoundException("Ubicación no encontrada"));
 
         User createdByUser = userRepository.findById(dto.getCreatedByUserId())
-                .orElseThrow(() -> new RuntimeException("Usuario creador no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Usuario creador no encontrado"));
 
         item.setName(dto.getName());
         item.setImg(dto.getImg());
@@ -126,7 +128,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public void activate(Long id) {
         Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Item no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Item no encontrado"));
 
         item.setIsActive(true);
 
@@ -136,7 +138,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public void deactivate(Long id) {
         Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Item no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Item no encontrado"));
 
         item.setIsActive(false);
 

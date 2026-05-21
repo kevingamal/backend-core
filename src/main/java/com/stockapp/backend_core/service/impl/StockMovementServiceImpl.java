@@ -16,6 +16,9 @@ import com.stockapp.backend_core.service.StockMovementService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import com.stockapp.backend_core.exception.BadRequestException;
+import com.stockapp.backend_core.exception.NotFoundException;
+
 import java.util.List;
 
 @Service
@@ -42,21 +45,21 @@ public class StockMovementServiceImpl implements StockMovementService {
     @Transactional
     public StockMovementResponseDto create(StockMovementCreateDto dto) {
         Item item = itemRepository.findById(dto.getItemId())
-                .orElseThrow(() -> new RuntimeException("Item no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Item no encontrado"));
 
         User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
 
         Location fromLocation = null;
         if (dto.getFromLocationId() != null) {
             fromLocation = locationRepository.findById(dto.getFromLocationId())
-                    .orElseThrow(() -> new RuntimeException("Ubicación de origen no encontrada"));
+                    .orElseThrow(() -> new NotFoundException("Ubicación de origen no encontrada"));
         }
 
         Location toLocation = null;
         if (dto.getToLocationId() != null) {
             toLocation = locationRepository.findById(dto.getToLocationId())
-                    .orElseThrow(() -> new RuntimeException("Ubicación de destino no encontrada"));
+                    .orElseThrow(() -> new NotFoundException("Ubicación de destino no encontrada"));
         }
 
         validateMovement(dto, item, fromLocation, toLocation);
@@ -88,7 +91,7 @@ public class StockMovementServiceImpl implements StockMovementService {
     @Override
     public StockMovementResponseDto findById(Long id) {
         StockMovement movement = stockMovementRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Movimiento no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Movimiento no encontrado"));
 
         return mapToResponseDto(movement);
     }
@@ -156,11 +159,11 @@ public class StockMovementServiceImpl implements StockMovementService {
             Location toLocation
     ) {
         if (dto.getMovementType() == null) {
-            throw new RuntimeException("El tipo de movimiento es obligatorio");
+            throw new BadRequestException("El tipo de movimiento es obligatorio");
         }
 
         if (dto.getQuantity() == null || dto.getQuantity() <= 0) {
-            throw new RuntimeException("La cantidad debe ser mayor a cero");
+            throw new BadRequestException("La cantidad debe ser mayor a cero");
         }
 
         MovementType type = dto.getMovementType();
@@ -168,59 +171,59 @@ public class StockMovementServiceImpl implements StockMovementService {
         switch (type) {
             case TRANSFER -> {
                 if (fromLocation == null || toLocation == null) {
-                    throw new RuntimeException("TRANSFER requiere ubicación de origen y destino");
+                    throw new BadRequestException("TRANSFER requiere ubicación de origen y destino");
                 }
 
                 if (item.getType() == ItemType.TOOL && dto.getQuantity() != 1) {
-                    throw new RuntimeException("Una herramienta solo puede transferirse con cantidad 1");
+                    throw new BadRequestException("Una herramienta solo puede transferirse con cantidad 1");
                 }
             }
 
             case CONSUMPTION -> {
                 if (item.getType() != ItemType.SUPPLY) {
-                    throw new RuntimeException("CONSUMPTION solo aplica a insumos");
+                    throw new BadRequestException("CONSUMPTION solo aplica a insumos");
                 }
 
                 if (toLocation == null) {
-                    throw new RuntimeException("CONSUMPTION requiere ubicación donde se consumió");
+                    throw new BadRequestException("CONSUMPTION requiere ubicación donde se consumió");
                 }
 
                 if (item.getCurrentStock() < dto.getQuantity()) {
-                    throw new RuntimeException("Stock insuficiente");
+                    throw new BadRequestException("Stock insuficiente");
                 }
             }
 
             case CREATE -> {
                 if (fromLocation != null) {
-                    throw new RuntimeException("CREATE no debe tener ubicación de origen");
+                    throw new BadRequestException("CREATE no debe tener ubicación de origen");
                 }
 
                 if (toLocation == null) {
-                    throw new RuntimeException("CREATE requiere ubicación inicial");
+                    throw new BadRequestException("CREATE requiere ubicación inicial");
                 }
             }
 
             case ADJUSTMENT_IN -> {
                 if (fromLocation != null) {
-                    throw new RuntimeException("ADJUSTMENT_IN no debe tener ubicación de origen");
+                    throw new BadRequestException("ADJUSTMENT_IN no debe tener ubicación de origen");
                 }
 
                 if (toLocation == null) {
-                    throw new RuntimeException("ADJUSTMENT_IN requiere ubicación donde apareció stock");
+                    throw new BadRequestException("ADJUSTMENT_IN requiere ubicación donde apareció stock");
                 }
             }
 
             case ADJUSTMENT_OUT -> {
                 if (fromLocation == null) {
-                    throw new RuntimeException("ADJUSTMENT_OUT requiere ubicación de origen");
+                    throw new BadRequestException("ADJUSTMENT_OUT requiere ubicación de origen");
                 }
 
                 if (toLocation != null) {
-                    throw new RuntimeException("ADJUSTMENT_OUT no debe tener ubicación de destino");
+                    throw new BadRequestException("ADJUSTMENT_OUT no debe tener ubicación de destino");
                 }
 
                 if (item.getCurrentStock() < dto.getQuantity()) {
-                    throw new RuntimeException("Stock insuficiente");
+                    throw new BadRequestException("Stock insuficiente");
                 }
             }
         }
