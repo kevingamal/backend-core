@@ -35,10 +35,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/").permitAll()
+                        
+                        /*
 
                         .requestMatchers(HttpMethod.GET, "/auth/me").authenticated()
 
-                        .requestMatchers(HttpMethod.POST, "/users").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/users").hasRole("ADMIN")		//.permitAll()//.hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/users/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/users/**").hasRole("ADMIN")
@@ -55,6 +57,10 @@ public class SecurityConfig {
 
                         .requestMatchers("/movements/**").authenticated()
                         .anyRequest().authenticated()
+                        
+                        */
+                        
+                        .anyRequest().permitAll()
                 )
                 .addFilterBefore(
                         jwtAuthenticationFilter,
